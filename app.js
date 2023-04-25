@@ -9,12 +9,13 @@ const PASS = process.env.PASSWORD;
 
 // express app
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // connect to db and listen for requests
 const uri = `mongodb+srv://db-user:${PASS}@cluster0.1reujyd.mongodb.net/node-tutorial?retryWrites=true`
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
-    app.listen(3002);
+    app.listen(PORT);
     console.log('connected to db');
   })
   .catch((err) => console.log(err));
