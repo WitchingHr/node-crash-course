@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const blogRoutes = require('./routes/blogRoutes');
 
 // get password from .env file
 require('dotenv').config();
@@ -10,7 +11,7 @@ const PASS = process.env.PASSWORD;
 const app = express();
 
 // connect to db and listen for requests
-const uri = `mongodb+srv://db-user:${PASS}@cluster0.1reujyd.mongodb.net/?retryWrites=true&w=majority;`
+const uri = `mongodb+srv://db-user:${PASS}@cluster0.1reujyd.mongodb.net/node-tutorial?retryWrites=true`
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((result) => {
     app.listen(3002);
@@ -23,30 +24,26 @@ app.set('view engine', 'ejs');
 
 // middleware & static files
 app.use(express.static('public'));
+// parse url-encoded data (from form)
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// mongoose and mongo sandbox routes
-// app.get('/add-blog', (req, res) => {
+// ROUTES:
 
-// routes
+// index (redirect to blogs)
 app.get('/', (req, res) => {
-  const blogs = [
-    { title: 'Yoshi finds eggs', snippet: 'Lorem ipsum dolor sit amet consectetur' },
-    { title: 'Mario finds stars', snippet: 'Lorem ipsum dolor sit amet consectetur' },
-    { title: 'How to defeat bowser', snippet: 'Lorem ipsum dolor sit amet consectetur' },
-  ];
-  res.render('index', { title: 'Home', blogs });
+  res.redirect('/blogs');
 });
 
+// about
 app.get('/about', (req, res) => {
   res.render('about', { title: 'About' });
 });
 
-app.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'Create a new blog' });
-});
+// blog routes
+app.use('/blogs', blogRoutes);
 
 // 404 page
 app.use((req, res) => {
-  res.status(404).render('404'), { title: '404' };
+  res.status(404).render('404', { title: '404' });
 });

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+	<%- include('./partials/head.ejs') %>
+	<body>
+		<%- include('./partials/nav.ejs') %>
+		<div class="details content">
+			<h2><%= blog.title %></h2>
+			<div class="content">
+				<p><%= blog.body %></p>
+			</div>
+			<a class="delete" data-doc="<%= blog._id %>">delete</a>
+		</div>
+    <script>
+      // this code is run on the client
+      const trashCan = document.querySelector('a.delete');
+      trashCan.addEventListener('click', (e) => {
+        // get the id of the blog to delete from data-doc attribute
+        const endpoint = `/blogs/${trashCan.dataset.doc}`;
+        // send DELETE request to /blogs/:id
+        fetch(endpoint, {
+          method: 'DELETE',
+        })
+        // use the response to redirect to the homepage
+        .then((response) => response.json())
+        .then((data) => window.location.href = data.redirect)
+        .catch(err => console.error(err));
+      });
+    </script>
+		<%- include('./partials/footer.ejs') %>
+	</body>
+</html>
